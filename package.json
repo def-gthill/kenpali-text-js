@@ -1,0 +1,28 @@
+{
+  "name": "kenpali-text",
+  "version": "0.1.0",
+  "description": "Text processing functions for the Kenpali minimalistic programming language",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "ava"
+  },
+  "author": "Graham Hill",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/def-gthill/kenpali-text-js"
+  },
+  "devDependencies": {
+    "ava": "^6.1.3",
+    "eslint": "^9.8.0",
+    "kenpali": "0.9.0",
+    "prettier": "^3.3.3"
+  },
+  "ava": {
+    "files": [
+      "test/**/*.test.js"
+    ]
+  }
+}

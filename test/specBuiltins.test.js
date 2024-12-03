@@ -7,7 +7,9 @@ const specPath = "../kenpali-text/text-builtins.md";
 runSpecFile(
   specPath,
   (input) =>
-    kpeval(kpparse(input), { modules: kpobject(["text", textModule]) }),
+    kpeval(kpparse(input), {
+      modules: kpobject(["text", textModule]),
+    }),
   (t, actualOutputValue, expectedOutput) => {
     const expectedOutputValue = kpeval(kpparse(expectedOutput));
     t.deepEqual(actualOutputValue, expectedOutputValue);

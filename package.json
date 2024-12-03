@@ -14,10 +14,12 @@
     "type": "git",
     "url": "git+https://github.com/def-gthill/kenpali-text-js"
   },
+  "dependencies": {
+    "kenpali": "file:/../kenpali-js"
+  },
   "devDependencies": {
     "ava": "^6.1.3",
     "eslint": "^9.8.0",
-    "kenpali": "0.9.0",
     "prettier": "^3.3.3"
   },
   "ava": {

@@ -23,6 +23,62 @@ const rawBuiltins = [
     }
   ),
   builtin(
+    "startsWith",
+    {
+      params: [
+        { name: "string", type: "string" },
+        { name: "prefix", type: "string" },
+      ],
+    },
+    function ([string, prefix]) {
+      return string.startsWith(prefix);
+    }
+  ),
+  builtin(
+    "removePrefix",
+    {
+      params: [
+        { name: "string", type: "string" },
+        { name: "prefix", type: "string" },
+      ],
+    },
+    function ([string, prefix]) {
+      if (string.startsWith(prefix)) {
+        return string.slice(prefix.length);
+      } else {
+        return string;
+      }
+    }
+  ),
+  builtin(
+    "endsWith",
+    {
+      params: [
+        { name: "string", type: "string" },
+        { name: "suffix", type: "string" },
+      ],
+    },
+    function ([string, suffix]) {
+      return string.endsWith(suffix);
+    }
+  ),
+  builtin(
+    "removeSuffix",
+    {
+      params: [
+        { name: "string", type: "string" },
+        { name: "suffix", type: "string" },
+      ],
+    },
+    function ([string, suffix]) {
+      if (string.endsWith(suffix)) {
+        return string.slice(0, string.length - suffix.length);
+      } else {
+        return string;
+      }
+    }
+  ),
+  builtin(
     "regex",
     { params: [{ name: "pattern", type: "string" }] },
     function ([pattern]) {

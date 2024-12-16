@@ -16,6 +16,5 @@ runSpecFile(
     const expectedOutputValue = kpeval(kpparse(expectedOutput));
     t.deepEqual(actualOutputValue, expectedOutputValue);
   },
-  (t) => t.fail("Error testing not implemented"),
-  ["Matching an entire string to a regex"]
+  (t) => t.fail("Error testing not implemented")
 );

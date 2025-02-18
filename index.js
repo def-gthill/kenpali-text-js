@@ -1,3 +1,3 @@
-import { textModule } from "./src/textModule";
+import { textModule } from "./src/textModule.js";
 
 export { textModule };

@@ -15,7 +15,7 @@
     "url": "git+https://github.com/def-gthill/kenpali-text-js"
   },
   "dependencies": {
-    "kenpali": "^0.12.0"
+    "kenpali": "^0.16.0"
   },
   "devDependencies": {
     "ava": "^6.1.3",

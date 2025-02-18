@@ -1,6 +1,6 @@
 {
   "name": "kenpali-text",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Text processing functions for the Kenpali minimalistic programming language",
   "main": "index.js",
   "types": "index.d.ts",

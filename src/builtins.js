@@ -1,4 +1,4 @@
-import { kpobject } from "kenpali";
+import { builtin, instance, kpobject, method } from "kenpali";
 
 const rawBuiltins = [
   builtin(
@@ -80,45 +80,46 @@ const rawBuiltins = [
   ),
   builtin(
     "regex",
-    { params: [{ name: "pattern", type: "string" }] },
-    function ([pattern]) {
-      return kpobject(
-        [
-          "findAll",
-          builtin(
-            "findAll",
-            { params: [{ name: "string", type: "string" }] },
-            function ([string]) {
-              const regex = new RegExp(pattern, "g");
-              const result = [];
-              let match;
-              while ((match = regex.exec(string)) !== null) {
-                result.push(toKpMatch(match));
-              }
-              return result;
-            }
-          ),
-        ],
-        [
-          "match",
-          builtin(
-            "match",
-            { params: [{ name: "string", type: "string" }] },
-            function ([string]) {
-              const regex = new RegExp(pattern, "g");
-              const match = regex.exec(string);
-              if (match === null) {
-                return null;
-              }
-              if (match.index !== 0 || regex.lastIndex !== string.length) {
-                return null;
-              }
-              return toKpMatch(match);
-            }
-          ),
-        ]
-      );
-    }
+    {
+      params: [{ name: "pattern", type: "string" }],
+    },
+    function ([pattern], { getMethod }) {
+      return instance({ pattern }, ["findAll", "match"], getMethod);
+    },
+    [
+      method(
+        "findAll",
+        {
+          params: [{ name: "string", type: "string" }],
+        },
+        function ([self, string]) {
+          const regex = new RegExp(self.pattern, "g");
+          const result = [];
+          let match;
+          while ((match = regex.exec(string)) !== null) {
+            result.push(toKpMatch(match));
+          }
+          return result;
+        }
+      ),
+      method(
+        "match",
+        {
+          params: [{ name: "string", type: "string" }],
+        },
+        function ([self, string]) {
+          const regex = new RegExp(self.pattern, "g");
+          const match = regex.exec(string);
+          if (match === null) {
+            return null;
+          }
+          if (match.index !== 0 || regex.lastIndex !== string.length) {
+            return null;
+          }
+          return toKpMatch(match);
+        }
+      ),
+    ]
   ),
 ];
 
@@ -132,14 +133,6 @@ function toKpMatch(match) {
       match.groups ? kpobject(...Object.entries(match.groups)) : kpobject(),
     ]
   );
-}
-
-export function builtin(name, paramSpec, f) {
-  f.builtinName = name;
-  for (const property in paramSpec) {
-    f[property] = paramSpec[property];
-  }
-  return f;
 }
 
 export const builtins = kpobject(...rawBuiltins.map((f) => [f.builtinName, f]));

@@ -1,45 +1,50 @@
-import { builtin, instance, kpobject, method } from "kenpali";
+import {
+  kpobject,
+  platformClass,
+  platformFunction,
+  stringClass,
+} from "kenpali";
 
 const rawBuiltins = [
-  builtin(
+  platformFunction(
     "trim",
-    { params: [{ name: "string", type: "string" }] },
+    { posParams: [{ name: "string", type: stringClass }] },
     function ([string]) {
       return string.trim();
     }
   ),
-  builtin(
+  platformFunction(
     "toLowerCase",
-    { params: [{ name: "string", type: "string" }] },
+    { posParams: [{ name: "string", type: stringClass }] },
     function ([string]) {
       return string.toLowerCase();
     }
   ),
-  builtin(
+  platformFunction(
     "toUpperCase",
-    { params: [{ name: "string", type: "string" }] },
+    { posParams: [{ name: "string", type: stringClass }] },
     function ([string]) {
       return string.toUpperCase();
     }
   ),
-  builtin(
+  platformFunction(
     "startsWith",
     {
-      params: [
-        { name: "string", type: "string" },
-        { name: "prefix", type: "string" },
+      posParams: [
+        { name: "string", type: stringClass },
+        { name: "prefix", type: stringClass },
       ],
     },
     function ([string, prefix]) {
       return string.startsWith(prefix);
     }
   ),
-  builtin(
+  platformFunction(
     "removePrefix",
     {
-      params: [
-        { name: "string", type: "string" },
-        { name: "prefix", type: "string" },
+      posParams: [
+        { name: "string", type: stringClass },
+        { name: "prefix", type: stringClass },
       ],
     },
     function ([string, prefix]) {
@@ -50,24 +55,24 @@ const rawBuiltins = [
       }
     }
   ),
-  builtin(
+  platformFunction(
     "endsWith",
     {
-      params: [
-        { name: "string", type: "string" },
-        { name: "suffix", type: "string" },
+      posParams: [
+        { name: "string", type: stringClass },
+        { name: "suffix", type: stringClass },
       ],
     },
     function ([string, suffix]) {
       return string.endsWith(suffix);
     }
   ),
-  builtin(
+  platformFunction(
     "removeSuffix",
     {
-      params: [
-        { name: "string", type: "string" },
-        { name: "suffix", type: "string" },
+      posParams: [
+        { name: "string", type: stringClass },
+        { name: "suffix", type: stringClass },
       ],
     },
     function ([string, suffix]) {
@@ -78,21 +83,23 @@ const rawBuiltins = [
       }
     }
   ),
-  builtin(
-    "regex",
-    {
-      params: [{ name: "pattern", type: "string" }],
+  ...platformClass("Regex", {
+    constructors: {
+      newRegex: {
+        posParams: [{ name: "pattern", type: stringClass }],
+        body: ([pattern], { getMethod }) => ({
+          internals: { pattern },
+          properties: {
+            findAll: getMethod("findAll"),
+            match: getMethod("match"),
+          },
+        }),
+      },
     },
-    function ([pattern], { getMethod }) {
-      return instance({ pattern }, ["findAll", "match"], getMethod);
-    },
-    [
-      method(
-        "findAll",
-        {
-          params: [{ name: "string", type: "string" }],
-        },
-        function ([self, string]) {
+    methods: {
+      findAll: {
+        posParams: [{ name: "string", type: stringClass }],
+        body: ([self, string]) => {
           const regex = new RegExp(self.pattern, "g");
           const result = [];
           let match;
@@ -100,14 +107,11 @@ const rawBuiltins = [
             result.push(toKpMatch(match));
           }
           return result;
-        }
-      ),
-      method(
-        "match",
-        {
-          params: [{ name: "string", type: "string" }],
         },
-        function ([self, string]) {
+      },
+      match: {
+        posParams: [{ name: "string", type: stringClass }],
+        body: ([self, string]) => {
           const regex = new RegExp(self.pattern, "g");
           const match = regex.exec(string);
           if (match === null) {
@@ -117,10 +121,10 @@ const rawBuiltins = [
             return null;
           }
           return toKpMatch(match);
-        }
-      ),
-    ]
-  ),
+        },
+      },
+    },
+  }),
 ];
 
 function toKpMatch(match) {
@@ -135,4 +139,8 @@ function toKpMatch(match) {
   );
 }
 
-export const builtins = kpobject(...rawBuiltins.map((f) => [f.builtinName, f]));
+export const builtins = kpobject(
+  ...rawBuiltins.map((builtin) =>
+    typeof builtin === "function" ? [builtin.functionName, builtin] : builtin
+  )
+);

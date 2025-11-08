@@ -1,5 +1,6 @@
 import test from "ava";
 import fs from "fs";
+import { display, kpcatch } from "kenpali";
 
 const r = String.raw;
 
@@ -29,12 +30,24 @@ export function runSpecFile(
     if (only && !only.includes(description)) {
       continue;
     }
-    const actualOutputValue = functionToTest(input);
     test(description, (t) => {
+      const actualOutputValue = kpcatch(() => functionToTest(input));
       if (errorName) {
-        checkErrorOutput(t, actualOutputValue, errorName, errorDetails);
+        if (actualOutputValue.status === "error") {
+          checkErrorOutput(t, actualOutputValue.error, errorName, errorDetails);
+        } else {
+          t.fail(
+            `Expected error, but got success: ${display(actualOutputValue.value)}`
+          );
+        }
       } else {
-        checkNormalOutput(t, actualOutputValue, output);
+        if (actualOutputValue.status === "success") {
+          checkNormalOutput(t, actualOutputValue.value, output);
+        } else {
+          t.fail(
+            `Expected success, but got error: ${display(actualOutputValue.error)}`
+          );
+        }
       }
     });
   }
